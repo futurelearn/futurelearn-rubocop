@@ -12,6 +12,7 @@ Gem::Specification.new do |spec|
   spec.files         = Dir["config/**/*", "*.markdown"]
 
   spec.add_dependency "rubocop", "~> 1.14.0"
+  spec.add_dependency "rubocop-rspec", "~> 2.3.0"
 
   spec.add_development_dependency "bundler", "~> 2.1"
   spec.add_development_dependency "rake", "~> 13.0"

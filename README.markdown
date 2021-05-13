@@ -23,6 +23,8 @@ Then in your project's rubocop config:
 inherit_gem:
   rubocop-futurelearn:
     - config/default.yml
+    # Optionally
+    - config/rspec.yml
 
 inherit_mode:
   merge:

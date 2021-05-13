@@ -1,6 +1,7 @@
 # Run with all config to check it's valid
 inherit_from:
   - ./config/default.yml
+  - ./config/rspec.yml
 
 inherit_mode:
   merge:

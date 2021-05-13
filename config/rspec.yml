@@ -1,0 +1,538 @@
+require: rubocop-rspec
+
+# This cop disables a number of RSpec aliases for the same method, e.g.
+# `#feature` is an alias of `#describe`. We make heavy use of these and
+# believe that they're valuable.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec/capybara.html#rspeccapybarafeaturemethods
+RSpec/Capybara/FeatureMethods:
+  Enabled: false
+
+# This rule insists that the top-level RSpec.describe block of every file
+# must have a class or module as its argument:
+#
+#     # good
+#     RSpec.describe Wat do
+#     end
+#
+#     # bad
+#     RSpec.describe 'the feeling of wat' do
+#     end
+#
+# We use RSpec for testing in many contexts where a class or module isn't
+# being described (e.g. view specs, features). When enabled this cop flagged
+# up no examples that really should have been a class, so we've disabled it.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecdescribeclass
+RSpec/DescribeClass:
+  Enabled: false
+
+# This cop insists that described_class should be used wherever possible
+# instead of repeated references to the same constant:
+#
+#     RSpec.describe Wat do
+#       # good
+#       subject { described_class.new }
+#
+#       # bad
+#       subject { Wat.new }
+#     end
+#
+# We believe this is good stylistic guidance, but there are sufficient
+# examples where enforcing it is troublesome that we don't believe it should
+# be linted for.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecdescribedclass
+RSpec/DescribedClass:
+  Enabled: false
+
+# This cop applies a line length limit to examples. While excessively long
+# examples are indeed a sign that something could be simplified, we don't
+# believe that arbitrary limits are a useful way of encouraging such
+# simplification.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecexamplelength
+RSpec/ExampleLength:
+  Enabled: false
+
+# This cop checks for the word "should" at the start of example descriptions:
+#
+#     # bad
+#     it "should delete the file"
+#
+#     # good
+#     it "deletes the file"
+#
+# While we agree that more definite example descriptions are preferable, we're
+# not confident in the autocorrect for this cop, which is described as
+# "experimental", so have left it disabled.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecexamplewording
+RSpec/ExampleWording:
+  Enabled: false
+
+# This cop dictates how to use the expect { do_thing }.to change { result }
+# matcher. It defaults to preferring the "method call" style:
+#
+#     # method_call
+#     expect { User.create }.to change(User, :count)
+#
+#     # block
+#     expect { User.create }.to change { User.count }
+#
+# We believe that the block style is much clearer since you can actually see
+# the code being executed for the change check, so have enforced this style.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecexpectchange
+RSpec/ExpectChange:
+  EnforcedStyle: block
+
+# This cop prefers the use of `FactoryBot.create_list` over `n.times {
+# FactoryBot.create... }`. We believe the latter is more straightforwardly
+# readable, and doesn't necessitate remembering the create_list argument
+# order, so we've disabled the cop.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec/factorybot.html#rspecfactorybotcreatelist
+RSpec/FactoryBot/CreateList:
+  Enabled: false
+
+# This cop insists that you either commit to one style of the per-test
+# RSpec hooks:
+#
+#     # good
+#     before do
+#       whatever
+#     end
+#
+#     # bad
+#     before(:each) do
+#       whatever
+#     end
+#
+# We think there are valid contextual reasons to prefer one over the other
+# (e.g. the explicit argument is useful in global config where the scope is
+# unclear), so we don't want to force the decision with this cop.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspechookargument
+RSpec/HookArgument:
+  Enabled: false
+
+# This cop encourages the use of `let` memoisation over instance variables in
+# specs. While we believe this is good stylistic guidance, our main codebase
+# contains thousands of violations, so we will leave enabling this for future
+# work.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecinstancevariable
+RSpec/InstanceVariable:
+  Enabled: false
+
+# This insists that the subject should always come before let blocks, even
+# when the subject construction depends on said let blocks:
+#
+#     # bad
+#     let(:params) { blah }
+#
+#     subject { described_class.new(params) }
+#
+#     # good
+#     subject { described_class.new(params) }
+#
+#     let(:params) { blah }
+#
+# We prefer to let the dependencies of the subject under test to be declared
+# before it's initialized so that it's easier to understand what objects it's
+# been passed.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecleadingsubject
+RSpec/LeadingSubject:
+  Enabled: false
+
+# This rule prevents the declaration of constants within specs:
+#
+#     # bad
+#     RSpec.describe SomeModule do
+#       class DummyClass
+#         include SomeModule
+#       end
+#
+#       subject { DummyClass.new }
+#     end
+#
+#     # good
+#     RSpec.describe SomeModule do
+#       let(:dummy_klass) do
+#         Class.new do
+#           include SomeModule
+#         end
+#       end
+#
+#       subject { dummy_klass.new }
+#     end
+#
+# This is to avoid constants being overwritten by different specs due to
+# name re-use.
+#
+# This is excellent advice; we would like to enable this rule in future, but
+# using dynamic classes isn't always easy, so we need to remedy our
+# existing violations carefully before this is possible.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecleakyconstantdeclaration
+RSpec/LeakyConstantDeclaration:
+  Enabled: false
+
+# This cop insists that you can't interleave let blocks with examples, i.e.
+# lets should be grouped together at the top of each example group. While this
+# is generally good advice, we frequently use the following pattern to test
+# class methods:
+#
+#     RSpec.describe Wat do
+#       describe 'class methods' do
+#         describe '.hello' do
+#           # ...
+#         end
+#       end
+#
+#       let(:params) { 'eh?' }
+#
+#       subject { Wat.new(params) }
+#
+#       # instance method tests...
+#     end
+#
+# We've therefore disabled the cop for now, but would be open to enabling it
+# if a suitable fix for the above pattern is arrived at.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecletbeforeexamples
+RSpec/LetBeforeExamples:
+  Enabled: false
+
+# This rule insists that you don't use unreferenced let! calls:
+#
+#     # bad
+#     let!(:my_widget) { create(:widget) }
+#
+#     it 'counts widgets' do
+#       expect(Widget.count).to eq(1)
+#     end
+#
+#     # good
+#     it 'counts widgets' do
+#       create(:widget)
+#       expect(Widget.count).to eq(1)
+#     end
+#
+# While a nice idea, it doesn't play nicely with shared example groups
+# (which we use extensively) and it also prevents us naming things for
+# clarity even if they don't get directly referenced.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecletsetup
+RSpec/LetSetup:
+  Enabled: false
+
+# This cop prevents the use of message chain stubs:
+#
+#     allow(thing).to receive_message_chain(:where, :find_by, :id).and_return(3)
+#
+# This is very frequently a code smell, and while we have too many occurrences
+# of this to enable the cop at present, we would like to do so in future.
+RSpec/MessageChain:
+  Enabled: false
+
+# This mandates the use of post-hoc message assertions:
+#
+#     # bad
+#     it 'wat' do
+#       expect(thing).to receive(:wat)
+#
+#       thing.wat
+#     end
+#
+#     # good
+#     it 'wat' do
+#       allow(thing).to receive(:wat)
+#
+#       thing.wat
+#
+#       expect(thing).to have_received(:wat)
+#     end
+#
+# We think this is good practice; maintaining distinct "Arrange / Act /
+# Assert" phases in our tests aids clarity of what's being tested where.
+#
+# We currently have too many violations of this cop to enable it, but we'd
+# like to do so in future.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecmessagespies
+RSpec/MessageSpies:
+  Enabled: false
+
+# This prevents adding multiple top-level describe blocks to a single
+# file. We sometimes use this for single-file nested classes:
+#
+#     RSpec.describe Thing do
+#       # ...
+#     end
+#
+#     RSpec.describe Thing::Item do
+#       # ...
+#     end
+#
+# We do this rarely and it seems perfectly justifiable, so we've disabled the
+# rule. While we could nest the example group for the nested class, as they're
+# independent objects we don't want setup for the parent class affecting the
+# nested class's tests.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecmultipledescribes
+RSpec/MultipleDescribes:
+  Enabled: false
+
+# This prevents the use of multiple expectations in a single example. This
+# is generally considered good testing practice because with multiple
+# assertions, if the first one fails the restart aren't even executed.
+#
+# This means you may have to run the test multiple times to find all the
+# problems, whereas there's almost always an aggregate assertion you can
+# write to expose all the problems at once (or failing that, write
+# individual examples for each assertion).
+#
+# While we have too many violations at present to enable this cop, we'd like
+# to work towards it.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecmultipleexpectations
+RSpec/MultipleExpectations:
+  Enabled: false
+
+# This sets a maximum number of let blocks in an example group. While we agree
+# that the presence of very many such blocks is indicative of a too-complex
+# test subject that could use refactoring, we don't believe that setting
+# arbitrary limits is a useful way to respond to this test feedback.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecmultiplememoizedhelpers
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+# This cop prevents the use of multiple named subjects in the same example
+# group:
+#
+#     # bad
+#     describe Foo do
+#       subject(:user) { User.new }
+#       subject(:post) { Post.new }
+#     end
+#
+#     # good
+#     describe Foo do
+#       let(:user) { User.new }
+#       subject(:post) { Post.new }
+#     end
+#
+# This is good advice, however the cop is prone to false positives when
+# example groups are introduced by helpers it doesn't know about (e.g.
+# describe_action in controller specs). We've therefore disabled it.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecmultiplesubjects
+RSpec/MultipleSubjects:
+  Enabled: false
+
+# This rule insists that the test subject be given a descriptive name to
+# refer to:
+#
+#     # "bad"
+#     subject { User.new }
+#
+#     it "does a thing" do
+#       expect(subject).to do_a_thing
+#     end
+#
+#     # "good"
+#     subject(:user) { User.new }
+#
+#     it "does a thing" do
+#       expect(user).to do_a_thing
+#     end
+#
+# We believe it's strongly preferable to refer to the test subject using
+# `subject`; having this consistency makes it always plain what the subject
+# under test is, as opposed to other collaborating objects. If this cop were
+# configurable to forbid named subjects, we would prefer to do so, but for the
+# time being it's just disabled.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecnamedsubject
+RSpec/NamedSubject:
+  Enabled: false
+
+# This cop places a limit on the nesting of example groups. While
+# heavily-nested specs can indeed be hard to understand, we don't believe that
+# arbitrary limits are a useful way of avoiding such complexity.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecnestedgroups
+RSpec/NestedGroups:
+  Enabled: false
+
+# In RSpec the .to_not and .not_to assertions are synonyms. This rule
+# forces one or the other, configurably.
+#
+# Since usage in our existing codebase is evenly split between the two and
+# there doesn't seem to be much confusion that both are valid, we've disabled
+# the cop. We have, if you like, chosen not to NotToNot.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecnottonot
+RSpec/NotToNot:
+  Enabled: false
+
+# This cop attempts to bring order to the various ways to assert return
+# values of predicate methods:
+#
+#     class Frog
+#       def green?
+#         true
+#       end
+#     end
+#
+#     expect(frog).to be_green
+#     expect(frog.green?).to be_truthy
+#     expect(frog.green?).to be(true)
+#
+# While clarity here might be nice, we're not easily able to see a consistent
+# rationale in any of the configurable options, so we've left it disabled.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecpredicatematcher
+RSpec/PredicateMatcher:
+  Enabled: false
+
+# This forbids examples with the same description in the same test file.
+# Sometimes this can be caused by copy and paste error.
+#
+# However, we frequently repeat examples within different context groups to
+# demonstrate behaviour under different conditions. While there may be
+# workarounds for this (e.g. use of shared example groups) we don't believe
+# the cop is sufficiently valuable to take the time.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecrepeateddescription
+RSpec/RepeatedDescription:
+  Enabled: false
+
+# This forbids examples with the same block body in the same test file.
+# As with RSpec/RepeatedDescription, this can sometimes flag copy and paste
+# errors, but more frequently objects to legitimate duplication, so it's
+# disabled.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecrepeateddescription
+RSpec/RepeatedExample:
+  Enabled: false
+
+# This insists on using one of the two following stubbing styles:
+#
+#     allow(thing).to receive(:wat).and_return("chirrup")
+#     allow(thing).to receive(:wat) { "chirrup" }
+#
+# We believe there are perfectly valid contextual reasons to prefer one or the
+# other in different circumstances (e.g. a block body may be required if you
+# require your stub to return values that change with repeated calls). We've
+# therefore disabled the cop.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecreturnfromstub
+RSpec/ReturnFromStub:
+  Enabled: false
+
+# This cop attempts to locate let blocks in the same example group that should
+# be placed next to each other.
+#
+# This is broadly good practice, but the cop suffers from false positives
+# because it doesn't understand non-standard ways of introducing an example
+# group, such as the describe_action blocks for controller specs.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecscatteredlet
+RSpec/ScatteredLet:
+  Enabled: false
+
+# This cop attempts to locate before blocks in the same example group that
+# should be combined into a single block.
+#
+# This is broadly good practice, but the cop suffers from false positives
+# because it doesn't understand non-standard ways of introducing an example
+# group, such as the describe_action blocks for controller specs.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecscatteredsetup
+RSpec/ScatteredSetup:
+  Enabled: false
+
+# This cop forbids stubbing methods on the subject under test:
+#
+#     # bad
+#     allow(subject).to receive(:foo).and_return(6)
+#
+# There is no easy "good" equivalent - if the test subject implements a
+# method foo, we should be testing its behaviour, not sidestepping it.
+#
+# We believe this is extremely good advice. Stubbing the test subject is
+# recommended against because it means we're no longer testing the subject;
+# we're testing some modified version of it that exists only for tests. We can
+# stub its collaborators, i.e. the other objects it interacts with (because
+# we're not testing them right now), but the subject should work as it will in
+# real code.
+#
+# Due to existing violations in our codebase this rule is currently disabled,
+# but we'd like to work towards enabling it.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecsubjectstub
+RSpec/SubjectStub:
+  Enabled: false
+
+# This checks for things like
+#
+#     expect(thing).to receive(:some_message).and_return("some value")
+#
+# because they're both mocking (setting message expectations) and stubbing
+# (providing canned return values).
+#
+# We believe that separating these activities is useful advice, and would like
+# to enable this cop in future.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecstubbedmock
+RSpec/StubbedMock:
+  Enabled: false
+
+# This cop checks that let and named subject blocks are named with snake_case
+# rather than camelCase.
+#
+#     # bad
+#     let(:myGoodness) { MyGoodness.new }
+#
+#     # good
+#     let(:my_goodness) { MyGoodness.new }
+#
+# However, it's prone to false positives (for example, it flags up unrelated
+# instances of a method called `#subject` being called), so we've disabled it.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecvariablename
+RSpec/VariableName:
+  Enabled: false
+
+# This cop insists on either strings or symbols for let and subject block
+# names (defaulting to symbols):
+#
+#     # bad
+#     let('thing') { Thing.new }
+#
+#     # good
+#     let(:thing) { Thing.new }
+#
+# However, it's prone to false positives (for example, it flags up unrelated
+# instances of a method called `#subject` being called), so we've disabled it.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecvariabledefinition
+RSpec/VariableDefinition:
+  Enabled: false
+
+# This cop prefers the use of instance_double or class_double over the
+# non-verified doubles RSpec provides.
+#
+# We think this is generally excellent advice and strongly encourage the use
+# of verified doubles. However there are sufficient cases where this isn't
+# easy (or even possible) that we don't want to mandate it with a linter at
+# present.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecverifieddoubles
+RSpec/VerifiedDoubles:
+  Enabled: false
