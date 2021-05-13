@@ -1,0 +1,77 @@
+# This cop defaults to forbidding tabular alignment inside hash literals. We
+# currently have it disabled as applying it would produce a large diff in our
+# existing codebase.
+#
+# Since hash tables represent tabular data, we feel there's a better argument
+# for aligning them than other code (e.g. variable assignments). However,
+# we're open to reconsidering this and preventing alignment whitespace inside
+# hashes.
+#
+# Alternatively, since this cop supports enforcing alignment with
+# autoformatting, we might want to enable that instead.
+#
+# https://docs.rubocop.org/rubocop/cops_layout.html#layouthashalignment
+Layout/HashAlignment:
+  Enabled: false
+
+# We've chosen to disable adding whitespace for alignment outside hashes for
+# two reasons:
+#
+# 1) Maintaining vertical alignment when code changes is fiddly
+# 2) When alignment changes it causes spurious whitespace diffs
+#
+# We therefore believe the benefits of alignment in most circumstances are
+# outweighed by its costs.  We're open to reconsidering this if alignment can
+# be automated in some fashion (e.g. with a more sophisticated autoformatter).
+#
+# https://docs.rubocop.org/rubocop/cops_layout.html#layoutextraspacing
+Layout/ExtraSpacing:
+  AllowForAlignment: false
+
+# When introduced, this cop's default configuration
+# (special_inside_parentheses) produced a very large diff in our codebase, so
+# we selected the style that matched our most common usage.
+#
+# https://docs.rubocop.org/rubocop/cops_layout.html#layoutfirstarrayelementindentation
+Layout/FirstArrayElementIndentation:
+  EnforcedStyle: consistent
+
+# When introduced, this cop's default configuration
+# (special_inside_parentheses) produced a very large diff in our codebase, so
+# we selected the style that matched our most common usage.
+#
+# https://docs.rubocop.org/rubocop/cops_layout.html#layoutfirsthashelementindentation
+Layout/FirstHashElementIndentation:
+  EnforcedStyle: consistent
+
+# We don't currently enforce line length limits, as complying with them
+# manually can cause tedious busywork for developers.
+#
+# However, we would like to arrive at a consistent set of formatting rules
+# that allow us to automatically format to a max line length. We continue to
+# investigate whether this can be done with rubocop, or whether another
+# formatter might be more appropriate.
+#
+# https://docs.rubocop.org/rubocop/cops_layout.html#layoutlinelength
+Layout/LineLength:
+  Enabled: false
+
+# This cop's default style produces a very large diff in our existing
+# codebases, so we prefer the most common style currently in use:
+#
+#     thing.some_method
+#       .another_method
+#       .yet_another_method
+#
+# https://docs.rubocop.org/rubocop/cops_layout.html#layoutmultilinemethodcallindentation
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+# This is a newer rule, and needs to be explicitly configured to avoid a
+# "pending cop" warning. It prevents method calls in the following style:
+#
+#     thing.some_method (1, 2, 3)
+#
+# https://docs.rubocop.org/rubocop/cops_layout.html#layoutspacebeforebrackets
+Layout/SpaceBeforeBrackets:
+  Enabled: true

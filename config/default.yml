@@ -1,0 +1,14 @@
+AllCops:
+  NewCops: disable
+  SuggestExtensions: false
+
+# We don't believe that arbitrary limits on complexity metrics are a useful
+# way to control code complexity. We prefer to manage this via a shared
+# understanding of when to refactor, combined with regular pairing and code
+# review.
+Metrics:
+  Enabled: false
+
+inherit_from:
+  - layout.yml
+  - lint.yml

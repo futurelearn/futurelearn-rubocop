@@ -1,0 +1,251 @@
+# This cop is a more recent one that must be explicitly configured.
+#
+# https://docs.rubocop.org/rubocop/cops_lint.html#lintambiguousassignment
+Lint/AmbiguousAssignment:
+  Enabled: true
+
+# This cop tries to ensure that blocks are unambiguously associated with the
+# right method, e.g. the following clarifies that { Thing.count } is passed to
+# the #change method rather than #to:
+#
+#     # bad
+#     expect { Thing.create }.to change { Thing.count }
+#
+#     # good
+#     expect { Thing.create }.to(change { Thing.count })
+#
+# This was originally disabled because it generated false positives; this is
+# now fixed. If we can satisfy ourselves that it won't cause undue developer
+# confusion (it's not always obvious at a glance how to fix the warning, and
+# it doesn't support autocorrect), we should fix our violations and enable it.
+#
+# https://docs.rubocop.org/rubocop/cops_lint.html#lintambiguousblockassociation
+Lint/AmbiguousBlockAssociation:
+  Enabled: false
+
+# This is a more recent cop that must be explicitly configured.
+#
+# https://docs.rubocop.org/rubocop/cops_lint.html#lintduplicateelsifcondition
+Lint/DuplicateElsifCondition:
+  Enabled: true
+
+# This is a more recent cop that must be explicitly configured.
+#
+# https://docs.rubocop.org/rubocop/cops_lint.html#lintdeprecatedconstants
+Lint/DeprecatedConstants:
+  Enabled: true
+
+# This checks for branches of a conditional where the bodies are the same.
+#
+# While this can sometimes indicate a copy-and-paste error, in our codebase it
+# generally flags up examples where we're enumerating cases, and the
+# duplicated code is extremely minimal. Collapsing the cases appeared to harm
+# readability, so we've disabled the cop.
+#
+# https://docs.rubocop.org/rubocop/cops_lint.html#lintduplicatebranch
+Lint/DuplicateBranch:
+  Enabled: false
+
+# This is a more recent cop that must be explicitly configured.
+#
+# https://docs.rubocop.org/rubocop/cops_lint.html#lintduplicateregexpcharacterclasselement
+Lint/DuplicateRegexpCharacterClassElement:
+  Enabled: true
+
+# This complains if you pass an empty block to anything. It flagged up
+# numerous violations in our tests where we were trying to test a method
+# with a required block argument, but we didn't want to do anything in the
+# block. Rather than carve out exceptions, we've disabled the cop.
+#
+# https://docs.rubocop.org/rubocop/cops_lint.html#lintemptyblock
+Lint/EmptyBlock:
+  Enabled: false
+
+# This complains about empty class definitions, forcing a different style of
+# declaration:
+#
+#     # bad
+#     class MyError < StandardError; end
+#
+#     # good
+#     MyError = Class.new(StandardError)
+#
+# This isn't unreasonable, but the necessary transformation can produce
+# surprising bugs, in particular in combination with our rule that constants
+# must be frozen. This is observable in migrations defining basic models:
+#
+#     User = Class.new(ActiveRecord::Base).freeze
+#
+# The frozen class fights against Rails which performs extensive class
+# modification after the fact. We've therefore disabled the cop.
+#
+# https://docs.rubocop.org/rubocop/cops_lint.html#lintemptyclass
+Lint/EmptyClass:
+  Enabled: false
+
+# This cop is a more recent one that must be explicitly configured.
+#
+# https://docs.rubocop.org/rubocop/cops_lint.html#lintlambdawithoutliteralblock
+Lint/LambdaWithoutLiteralBlock:
+  Enabled: true
+
+# This cop is a more recent one that must be explicitly configured.
+#
+# https://docs.rubocop.org/rubocop/cops_lint.html#lintnoreturninbeginendblocks
+Lint/NoReturnInBeginEndBlocks:
+  Enabled: true
+
+# This cop is a more recent one that must be explicitly configured.
+#
+# https://docs.rubocop.org/rubocop/cops_lint.html#lintnumberedparameterassignment
+Lint/NumberedParameterAssignment:
+  Enabled: true
+
+# This cop is a more recent one that must be explicitly configured.
+#
+# https://docs.rubocop.org/rubocop/cops_lint.html#lintorassignmenttoconstant
+Lint/OrAssignmentToConstant:
+  Enabled: true
+
+# This cop is a more recent one that must be explicitly configured.
+#
+# https://docs.rubocop.org/rubocop/cops_lint.html#lintredundantdirglobsort
+#
+# Since it relies on Dir.glob behaviour only introduced in ruby 3.0, we've
+# disabled it.
+Lint/RedundantDirGlobSort:
+  Enabled: false
+
+# This cop is a more recent one that must be explicitly configured.
+#
+# https://docs.rubocop.org/rubocop/cops_lint.html#lintsymbolconversion
+Lint/SymbolConversion:
+  Enabled: true
+
+# This cop is a more recent one that must be explicitly configured.
+#
+# https://docs.rubocop.org/rubocop/cops_lint.html#linttoenumarguments
+Lint/ToEnumArguments:
+  Enabled: true
+
+# This cop is a more recent one that must be explicitly configured.
+#
+# https://docs.rubocop.org/rubocop/cops_lint.html#linttriplequotes
+Lint/TripleQuotes:
+  Enabled: true
+
+# This cop is a more recent one that must be explicitly configured.
+#
+# https://docs.rubocop.org/rubocop/cops_lint.html#lintunexpectedblockarity
+Lint/UnexpectedBlockArity:
+  Enabled: true
+
+# This cop is a more recent one that must be explicitly configured.
+#
+# https://docs.rubocop.org/rubocop/cops_lint.html#lintunmodifiedreduceaccumulator
+Lint/UnmodifiedReduceAccumulator:
+  Enabled: true
+
+# This cop objects to block arguments not referenced in the block body,
+# preferring their omission or naming with an underscore prefix.
+#
+# It was disabled when our rubocop config was first generated; it currently
+# produces a large number of violations in our codebase, so is staying off for
+# the time being.
+#
+# https://docs.rubocop.org/rubocop/cops_lint.html#lintunusedmethodargument
+Lint/UnusedBlockArgument:
+  Enabled: false
+
+# This cop objects to method arguments not referenced in the method body,
+# preferring their omission or naming with an underscore prefix.
+#
+# It was disabled when our rubocop config was first generated; it currently
+# produces a large number of violations in our codebase, so is staying off for
+# the time being.
+Lint/UnusedMethodArgument:
+  Enabled: false
+
+# This cop's documentation states it's prone to false positives, so we've
+# disabled it.
+#
+# https://docs.rubocop.org/rubocop/cops_lint.html#lintbinaryoperatorwithidenticaloperands
+Lint/BinaryOperatorWithIdenticalOperands:
+  Enabled: false
+
+# This cop objects to constants defined within blocks, as they don't
+# contribute to its lexical scope, which can cause confusion.
+#
+# This produces a large number of violations in our codebase, particularly in
+# tests. We would like to enable it in future.
+#
+# https://docs.rubocop.org/rubocop/cops_lint.html#lintconstantdefinitioninblock
+Lint/ConstantDefinitionInBlock:
+  Enabled: false
+
+# This cop's docs mark it as unsafe, which typically means a cop is prone to
+# false positives, or following its advice will cause bugs, or both.
+#
+# https://docs.rubocop.org/rubocop/cops_lint.html#linthashcomparebyidentity
+Lint/HashCompareByIdentity:
+  Enabled: false
+
+# This cop insists on invoking super inside various overridden object
+# lifecycle methods, most prominently #initialize for subclasses:
+#
+#     # bad
+#     class Thing < Doodad
+#       def initialize(some_arg)
+#         @some_arg = some_arg
+#       end
+#     end
+#
+#     # good
+#     class Thing < Doodad
+#       def initialize(some_arg)
+#         super
+#         @some_arg = some_arg
+#       end
+#     end
+#
+# While this can be good advice and may spot bugs, we very commonly use
+# inheritance purely for the template method pattern, where the base class has
+# no initializer and only a set of methods to override. Calling super in
+# subclass initializers would be harmless, but currently produces a very large
+# diff in our codebase, so the cop is disabled.
+#
+# https://docs.rubocop.org/rubocop/cops_lint.html#lintmissingsuper
+Lint/MissingSuper:
+  Enabled: false
+
+
+# This cop's docs mark it as unsafe, which typically means a cop is prone to
+# false positives, or following its advice will cause bugs, or both.
+#
+# https://docs.rubocop.org/rubocop/cops_lint.html#lintoutofrangeregexpref
+Lint/OutOfRangeRegexpRef:
+  Enabled: false
+
+# This cop's docs mark it as unsafe, which typically means a cop is prone to
+# false positives, or following its advice will cause bugs, or both.
+#
+# https://docs.rubocop.org/rubocop/cops_lint.html#lintredundantsafenavigation
+Lint/RedundantSafeNavigation:
+  Enabled: false
+
+Lint/TrailingCommaInAttributeDeclaration:
+  Enabled: false
+
+# This cop's docs mark it as unsafe, which typically means a cop is prone to
+# false positives, or following its advice will cause bugs, or both.
+#
+# https://docs.rubocop.org/rubocop/cops_lint.html#lintuselessmethoddefinition
+Lint/UselessMethodDefinition:
+  Enabled: false
+
+# This cop's docs mark it as unsafe, which typically means a cop is prone to
+# false positives, or following its advice will cause bugs, or both.
+#
+# https://docs.rubocop.org/rubocop/cops_lint.html#lintuselesstimes
+Lint/UselessTimes:
+  Enabled: false
