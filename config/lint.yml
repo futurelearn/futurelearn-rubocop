@@ -233,9 +233,6 @@ Lint/OutOfRangeRegexpRef:
 Lint/RedundantSafeNavigation:
   Enabled: false
 
-Lint/TrailingCommaInAttributeDeclaration:
-  Enabled: false
-
 # This cop's docs mark it as unsafe, which typically means a cop is prone to
 # false positives, or following its advice will cause bugs, or both.
 #
