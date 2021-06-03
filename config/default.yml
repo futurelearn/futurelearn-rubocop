@@ -12,3 +12,4 @@ Metrics:
 inherit_from:
   - layout.yml
   - lint.yml
+  - style.yml
