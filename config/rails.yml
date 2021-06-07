@@ -1,0 +1,343 @@
+require: rubocop-rails
+
+# This cop insists that ActiveRecord model callbacks be declared in the order
+# in which Rails will execute them. Since this is a clear benefit to
+# understanding model behaviour, we've enabled it.
+#
+# https://docs.rubocop.org/rubocop-rails/cops_rails.html#railsactiverecordcallbacksorder
+Rails/ActiveRecordCallbacksOrder:
+  Enabled: true
+
+# This cop insists that models inherit from ApplicationRecord rather than
+# ActiveRecord::Base, to pick up any default model behaviour we want in our
+# app. This is generally useful, but for migrations where we redefine model
+# code, we don't want to depend on anything outside the migration itself, so
+# we disable the cop for that directory.
+#
+# https://docs.rubocop.org/rubocop-rails/cops_rails.html#railsapplicationrecord
+Rails/ApplicationRecord:
+  Exclude:
+    - 'db/migrate/*'
+
+# This cop prefers the bulk change style of writing migrations:
+#
+#     # bad
+#     add_column :users, :name, :string, null: false
+#     add_column :users, :nickname, :string
+#
+#     # good
+#     change_table :users, bulk: true do |t|
+#       t.string :name, null: false
+#       t.string :nickname
+#     end
+#
+# This style may be preferable but we don't think it's worth mandating for
+# one-off files like migrations.
+#
+# https://docs.rubocop.org/rubocop-rails/cops_rails.html#railsbulkchangetable
+Rails/BulkChangeTable:
+  Enabled: false
+
+# This cop prefers the use of the new style tag.span("hello") over the old
+# style content_tag(:span, "hello") helpers.
+#
+# While that would be nice, we have a very large number of violations and the
+# auto-correct produced numerous breakages, so we don't feel it's worth
+# complying with this given that we're migrating away from Rails rendering in
+# any case.
+#
+# https://docs.rubocop.org/rubocop-rails/cops_rails.html#railscontenttag
+Rails/ContentTag:
+  Enabled: false
+
+# This cop insists on the addition of timestamps in create_table migrations.
+# We don't believe all tables need timestamps and are happy to leave this
+# judgment to developers.
+#
+# https://docs.rubocop.org/rubocop-rails/cops_rails.html#railscreatetablewithtimestamps
+Rails/CreateTableWithTimestamps:
+  Enabled: false
+
+# This cop prefers the rails delegate helper over explicit method delegations:
+#
+#     # good
+#     delegate :some_method, to: :some_object
+#
+#     # bad
+#     def some_method
+#       some_object.some_method
+#     end
+#
+# While we don't forbid them, delegations are hard to grep for and make it
+# more difficult to understand the interface of a given object at a glance, so
+# we've decided not to enforce them.
+#
+# https://docs.rubocop.org/rubocop-rails/cops_rails.html#railsdelegate
+Rails/Delegate:
+  Enabled: false
+
+# This cop lets you specify which out of the two following Rails path
+# reference styles to use:
+#
+#     Rails.root.join("app", "models", "thing.rb")
+#     Rails.root.join("app/models/thing.rb")
+#
+# We don't feel these two variants cause confusion so have left the cop
+# disabled.
+#
+# https://docs.rubocop.org/rubocop-rails/cops_rails.html#railsfilepath
+Rails/FilePath:
+  Enabled: false
+
+# This prefers SomeModel.find(id) over .find_by!(id: id) and other variants,
+# for simplicity. It's a new cop that must be explicitly configured, so we've
+# enabled it.
+Rails/FindById:
+  Enabled: true
+
+# This cop prefers using `has_many :through` over `has_and_belongs_to_many`.
+# While it can often be nice to name the join model and give it behaviour, we
+# don't think it's essential so have disabled the cop.
+#
+# https://docs.rubocop.org/rubocop-rails/cops_rails.html#railshasandbelongstomany
+Rails/HasAndBelongsToMany:
+  Enabled: false
+
+# This cop insists on adding a dependent: option to has_one and has_many
+# associations, even if no dependent behaviour is desired. When this rule was
+# introduced we had a very large number of violations and felt its value was
+# unclear, so we've disabled it.
+#
+# https://docs.rubocop.org/rubocop-rails/cops_rails.html#railshasmanyorhasonedependent
+Rails/HasManyOrHasOneDependent:
+  Enabled: false
+
+# This cop is a new pending one and must be explicitly configured. We can
+# remove this config after the next minor version upgrade.
+#
+# https://docs.rubocop.org/rubocop-rails/cops_rails.html#railsinquiry
+Rails/Inquiry:
+  Enabled: true
+
+# This cop tries to ensure that for all ActiveRecord associations where Rails
+# can't automatically determine the inverse association, one is explicitly
+# declared.
+#
+#     # bad
+#     class Blog < ApplicationRecord
+#       has_many :posts, -> { order(published_at: :desc) }
+#     end
+#
+#     class Post < ApplicationRecord
+#       belongs_to :blog
+#     end
+#
+#     # good
+#     class Blog < ApplicationRecord
+#       has_many(:posts,
+#         -> { order(published_at: :desc) },
+#         inverse_of: :blog
+#       )
+#     end
+#
+#     class Post < ApplicationRecord
+#       belongs_to :blog
+#     end
+#
+# We don't believe that there should necessarily even be an inverse
+# association, and don't want to create automated pressure to ensure that all
+# associations are symmetric. We've therefore disabled this cop.
+#
+# https://docs.rubocop.org/rubocop-rails/cops_rails.html#railsinverseof
+Rails/InverseOf:
+  Enabled: false
+
+# This cop insists that any before_action (etc.) callbacks defined in a
+# controller relate to a controller action that is defined in the same file.
+#
+# However this is deeply limiting, as it means you can't use these callbacks
+# to adjust action behaviour defined in a superclass or a controller concern,
+# which is one of their primary use cases.
+#
+# Naively applying the cop's guidance is likely to lead to bugs as well, so
+# we've disabled it.
+#
+# https://docs.rubocop.org/rubocop-rails/cops_rails.html#railslexicallyscopedactionfilter
+Rails/LexicallyScopedActionFilter:
+  Enabled: false
+
+# This cop is a new pending one and must be explicitly configured. We can
+# remove this config after the next minor version upgrade.
+#
+# https://docs.rubocop.org/rubocop-rails/cops_rails.html#railsmailername
+Rails/MailerName:
+  Enabled: true
+
+# This cop is a new pending one and must be explicitly configured. We can
+# remove this config after the next minor version upgrade.
+#
+# https://docs.rubocop.org/rubocop-rails/cops_rails.html#railsmatchroute
+Rails/MatchRoute:
+  Enabled: true
+
+# This cop is a new pending one and must be explicitly configured. We can
+# remove this config after the next minor version upgrade.
+#
+# https://docs.rubocop.org/rubocop-rails/cops_rails.html#railsnegateinclude
+Rails/NegateInclude:
+  Enabled: true
+
+# This cop prevents adding not-null columns in a migration without a default
+# value. The intention is to avoid migrations that will fail (if you add a
+# not-null column to an existing table without providing a default, it will
+# generate a database error because the DB has no value to insert).
+#
+# However, the linter's stern instruction to add a default value is unhelpful;
+# there may not be a sensible default value to provide, and the correct
+# approach is to introduce the column as nullable, backfill appropriate data,
+# and then make it not-null in a final migration step. We've therefore
+# disabled the cop.
+#
+# https://docs.rubocop.org/rubocop-rails/cops_rails.html#railsnotnullcolumn
+Rails/NotNullColumn:
+  Enabled: false
+
+# This cop objects to `puts` statements and other similar ones, preferring
+# logger use. That's fair enough, but it's unable to distinguish application
+# code from script code that runs in a non-server context, so rather than
+# carve out quite a large number of exceptions, we've disabled the cop.
+#
+# https://docs.rubocop.org/rubocop-rails/cops_rails.html#railsoutput
+Rails/Output:
+  Enabled: false
+
+# This cop is a new pending one and must be explicitly configured. We can
+# remove this config after the next minor version upgrade.
+#
+# https://docs.rubocop.org/rubocop-rails/cops_rails.html#railspluck
+Rails/Pluck:
+  Enabled: true
+
+# This cop prefers avoiding the use of `pluck` in AR query conditions, to save
+# an additional (or even never-executed) SQL query:
+#
+#     Comment.where(author_id: User.active.pluck(:id))
+#     # Executes:
+#     #
+#     #   1) SELECT id FROM users WHERE active
+#     #   2) SELECT * FROM comments WHERE author_id IN ([interpolated ids])
+#     #
+#     # Query 1) is executed immediately, and 2) lazily.
+#
+#     Comment.where(author_id: User.active.select(:id))
+#     # Executes:
+#     #
+#     #   SELECT * FROM comments WHERE author_id IN (SELECT id FROM users WHERE active)
+#     #
+#     # The query is executed lazily.
+#
+# In most cases this ought to be a performance optimisation, but I'm lightly
+# suspicious that in some cases MySQL will declare the subquery a dependent
+# one and make performance radically worse; since the cop can't know this
+# (indeed, static analysis really can't know if its suggestions will improve
+# performance), I believe we should disable this cop.
+#
+# https://docs.rubocop.org/rubocop-rails/cops_rails.html#railspluckinwhere
+Rails/PluckInWhere:
+  Enabled: false
+
+# This cop insists on correctly-pluralized use of 1.day.ago / 2.days.ago in
+# Rails' various duration helpers. We feel that life's too short.
+#
+# https://docs.rubocop.org/rubocop-rails/cops_rails.html#railspluralizationgrammar
+Rails/PluralizationGrammar:
+  Enabled: false
+
+# This cop prefers using `thing.present?` instead of `!thing.blank?` and some
+# other variations. Honestly, who cares?
+#
+# https://docs.rubocop.org/rubocop-rails/cops_rails.html#railspresent
+Rails/Present:
+  Enabled: false
+
+# This cop is a new pending one and must be explicitly configured. We can
+# remove this config after the next minor version upgrade.
+#
+# https://docs.rubocop.org/rubocop-rails/cops_rails.html#railsrenderplaintext
+Rails/RenderPlainText:
+  Enabled: true
+
+# Rails supports calling both request.referer and .referrer, the former
+# matching the (wrong) spelling in the HTTP spec, the latter being the correct
+# spelling. This cop enforces consistency; it defaults to the HTTP spec
+# version, but we consistently use the referrer spelling, so have configured
+# it to that.
+#
+# https://docs.rubocop.org/rubocop-rails/cops_rails.html#railsrequestreferer
+Rails/RequestReferer:
+  EnforcedStyle: referrer
+
+# This cop tries to ensure that all migrations are written reversibly. While
+# reversible migrations are sometimes useful while working across multiple
+# feature branches, we never use them to roll back changes in deployment
+# environments, so don't want to mandate that every migration be written
+# reversibly (indeed, sometimes this isn't possible).
+#
+# https://docs.rubocop.org/rubocop-rails/cops_rails.html#railsreversiblemigration
+Rails/ReversibleMigration:
+  Enabled: false
+
+# This cop is a new pending one and must be explicitly configured. We can
+# remove this config after the next minor version upgrade.
+#
+# https://docs.rubocop.org/rubocop-rails/cops_rails.html#railsshorti18n
+Rails/ShortI18n:
+  Enabled: true
+
+# This cop dislikes the use of `update_attribute`, `touch` and other assorted
+# ActiveRecord methods that skip model validations. While it's certainly
+# possible to use these methods incorrectly, there are many valid reasons to
+# use them; we don't want our codebase littered with rubocop:disable
+# directives, so have turned off the cop.
+#
+# https://docs.rubocop.org/rubocop-rails/cops_rails.html#railsskipsmodelvalidations
+Rails/SkipsModelValidations:
+  Enabled: false
+
+# This cop prefers the new style of Rails validations over the older ones:
+#
+#     # bad
+#     validates_presence_of :name
+#
+#     # good
+#     validates :name, presence: true
+#
+# We think this would be nice to enable for consistency, but as we had
+# extensive use of the old style, didn't think it valuable enough to enable at
+# the time it was introduced. We'd be open to changing our minds and incurring
+# the diff.
+#
+# https://docs.rubocop.org/rubocop-rails/cops_rails.html#railsvalidation
+Rails/Validation:
+  Enabled: false
+
+# This cop prefers User.exists?(last_name: nil) over User.where(last_name:
+# nil).exists?
+#
+# We don't think this is particularly valuable, and since the autocorrect is
+# marked as unsafe due to potential behaviour changes, we've disabled it.
+#
+# https://docs.rubocop.org/rubocop-rails/cops_rails.html#railswhereexists
+Rails/WhereExists:
+  Enabled: false
+
+# This cop insists that every rake task must boot rails by depending on the
+# :environment task.
+#
+# We think this introduces pointless slowness to tasks that don't interact
+# with Rails, and doesn't meaningfully help people to write tasks that do need
+# Rails.
+#
+# https://docs.rubocop.org/rubocop-rails/cops_rails.html#railsrakeenvironment
+Rails/RakeEnvironment:
+  Enabled: false
