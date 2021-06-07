@@ -1,0 +1,14 @@
+require: rubocop-thread_safety
+
+# We think all of this plugin's cops are worthwhile. They typically require
+# careful thought to pass while still remaining thread-safe, and may entail
+# significant changes to application code. For questions of mere stylistic
+# preference those costs are generally not warranted, but we feel that
+# highlighting places where thread safety needs particular attention is highly
+# valuable. This plugin has a small and sensible rule set, so we're happy to
+# enable it unconditionally.
+#
+# We should remember that a static analysis tool is unable to provide any
+# concrete guarantees of thread safety; rather, we should treat warnings from
+# this rule set as an indication that we should think through the
+# possibilities, and seek to pair or request wider code review than normal.
