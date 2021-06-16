@@ -1,0 +1,37 @@
+require: rubocop-graphql
+
+# This cop insists that all resolver and mutation arguments have a description.
+# We believe it is valuable to have descriptions for arguments which need
+# additional explanation, however we're not convinced it is useful to enforce them
+# for everything since this leads to a lot of unnecessary descriptions for example:
+#
+# class UserResolver < BaseResolver
+#   argument :id, GraphQL::Types::ID, description: "ID of the user", null: false
+# end
+#
+GraphQL/ArgumentDescription:
+  Enabled: false
+
+# This cop insists that all fields have a description.
+# We believe it is valuable to have descriptions for fields which need
+# additional explanation, however we're not convinced it is useful to enforce them
+# for everything since this leads to a lot of unnecessary descriptions for example:
+#
+# class UserType < Types::BaseObject
+#   field :id, GraphQL::Types::ID, description: "ID of the user", null: false
+# end
+#
+GraphQL/FieldDescription:
+  Enabled: false
+
+# This cop insists that all of our types have a description.
+# We believe it is valuable to have descriptions for fields which need
+# additional explanation, however we're not convinced it is useful to enforce them
+# for everything since this leads to a lot of unnecessary descriptions for example:
+#
+# class UserType < Types::BaseObject
+#   description "A user."
+# end
+#
+GraphQL/ObjectDescription:
+  Enabled: false
