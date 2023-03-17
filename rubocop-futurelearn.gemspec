@@ -15,11 +15,11 @@ Gem::Specification.new do |spec|
 
   spec.files = Dir["config/**/*", "*.markdown"]
 
-  spec.add_dependency "rubocop", "~> 1.14.0"
-  spec.add_dependency "rubocop-graphql", "~> 0.8.2"
-  spec.add_dependency "rubocop-rails", "~> 2.7.1"
-  spec.add_dependency "rubocop-rspec", "~> 2.3.0"
-  spec.add_dependency "rubocop-thread_safety", "~> 0.4.0"
+  spec.add_dependency "rubocop", "~> 1.48.1"
+  spec.add_dependency "rubocop-graphql", "~> 1.0.1"
+  spec.add_dependency "rubocop-rails", "~> 2.18.0"
+  spec.add_dependency "rubocop-rspec", "~> 2.19.0"
+  spec.add_dependency "rubocop-thread_safety", "~> 0.4.4"
 
   spec.add_development_dependency "bundler", "~> 2.1"
   spec.add_development_dependency "rake", "~> 13.0"
