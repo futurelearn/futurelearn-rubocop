@@ -415,6 +415,19 @@ Style/IfUnlessModifier:
 Style/IfWithBooleanLiteralBranches:
   Enabled: false
 
+# This cop's docs mark it as unsafe, which typically means a cop is prone to
+# false positives, or following its advice will cause bugs, or both.
+#
+# In this case, the cop assumes that every object defining a method #valid?
+# must, inevitably, have an inverse method #invalid?, and therefore insists
+# that you should use thing.invalid? instead of !thing.valid?.
+#
+# BUT WHAT IF IT DOESN'T EH. WHAT THEN.
+#
+# https://docs.rubocop.org/rubocop/cops_style.html#styleinversemethods
+Style/InverseMethods:
+  Enabled: false
+
 # This cop prefers the lambda do |x|; end syntax for multiline lambdas, over
 # the stabby lambda ->(x) do; end syntax.
 #
