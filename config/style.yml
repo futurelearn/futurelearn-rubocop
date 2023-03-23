@@ -324,6 +324,18 @@ Style/HashExcept:
 Style/HashLikeCase:
   Enabled: false
 
+# In ruby 3.1, this cop allows the enforcement of hash shorthand syntax, i.e.
+# the JavaScript-inspired { foo:, bar: } syntax which works if local variables
+# foo and bar exist.
+#
+# The default config is to enforce this wherever possible. While possibly
+# justifiable, it produces ~13k violations in our current codebase, so we'll
+# consider enabling it later.
+#
+# https://docs.rubocop.org/rubocop/cops_style.html#stylehashsyntax
+Style/HashSyntax:
+  EnforcedShorthandSyntax: either
+
 # This cop's docs mark it as unsafe, which typically means a cop is prone to
 # false positives, or following its advice will cause bugs, or both.
 #
