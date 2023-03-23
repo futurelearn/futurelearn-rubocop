@@ -8,6 +8,25 @@ require: rubocop-rspec
 RSpec/Capybara/FeatureMethods:
   Enabled: false
 
+# This rule insists on using match_array over contain_exactly when passing
+# splatted arrays:
+#
+#     # bad
+#     expect(things).to contain_exactly(*some_array)
+#
+#     # good
+#     expect(things).to match_array(some_array)
+#
+# I wouldn't particularly mind enforcing this, but the latest rubocop-rspec
+# version also includes RSpec/MatchArray which has opinions about when you
+# should use contain_exactly instead of match_array, and combined they just
+# seem like a massive pain in the neck to remember, so I'm disabling them
+# both.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspeccontainexactly
+RSpec/ContainExactly:
+  Enabled: false
+
 # This rule insists that the top-level RSpec.describe block of every file
 # must have a class or module as its argument:
 #
@@ -227,6 +246,25 @@ RSpec/LetBeforeExamples:
 #
 # https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecletsetup
 RSpec/LetSetup:
+  Enabled: false
+
+# This rule insists on using contain_exactly over match_array when passing
+# literal values:
+#
+#     # bad
+#     expect(things).to match_array([1, 2, 3])
+#
+#     # good
+#     expect(things).to contain_exactly(1, 2, 3)
+#
+# I wouldn't particularly mind enforcing this, but the latest rubocop-rspec
+# version also includes RSpec/ContainExactly which has obscure opinions about
+# when you should use match_array instead of contain_exactly, and combined
+# they just seem like a massive pain in the neck to remember, so I'm disabling
+# them both.
+#
+# https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecmatcharray
+RSpec/MatchArray:
   Enabled: false
 
 # This cop prevents the use of message chain stubs:
